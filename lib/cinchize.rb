@@ -23,6 +23,8 @@ module Cinchize
       config_file = cmd_options[cmd_options.index("-f") + 1]
     end
     
+    raise ArgumentError "the config file doesn't exist" unless File.exists? config_file
+    
     raise ArgumentError "needs a network" if cmd_options[-1].nil?
     network = cmd_options[-1]
     
