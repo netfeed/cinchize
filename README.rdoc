@@ -1,0 +1,32 @@
+= cinchize
+
+An early version of program which purpose is to daemonize Cinch ircbots from "simple" json config-files.
+
+== Config-file
+
+All config options can be skipped and the bot will use the defaults, but it could always be nice to connect to a server that isn't localhost, right? Plugins can be skipped too, but then the bot wouldn't do anything other then just idle.
+
+  {
+    "options" : {
+      "pid" : "/path/to/pid/dir",
+    },
+    "servers" : {
+      "freenode" : {
+        "server" : "irc.freenode.net",
+        "port" : 6667,
+        "nick" : "Cinchbot",
+        "plugins" : [
+          {
+            "module" : "plugin-module",
+            "class" : "Cinch::Plugins::User::SomePlugin",
+            "options" : { }
+          }
+        ]
+      }
+    }
+  }
+
+
+== Copyright
+
+Copyright (c) 2010 Victor Bergöö. See LICENSE for details.
