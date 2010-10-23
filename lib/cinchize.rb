@@ -11,6 +11,26 @@ require 'json'
 
 module Cinchize
   def self.run
+    name, daemon_options, ntw, plugins, plugin_options = config 
+    Daemons.run_proc(name, daemon_options) do
+      bot = Cinch::Bot.new do  
+        configure do |c|
+          ntw.keys.each do |key|
+            c.send("#{key}=".to_sym, ntw[key])
+          end
+          
+          c.plugins.plugins = plugins
+          c.plugins.options = plugin_options
+        end
+      end
+      
+      bot.start
+    end
+  rescue ArgumentError => e
+    "Error: #{e}"
+  end
+  
+  def self.config
     cmd_options = []
     
     idx = ARGV.index "--"
@@ -29,7 +49,6 @@ module Cinchize
     network = cmd_options[-1]
     
     cfg = JSON.parse File.open(config_file, "r").read()
-    cfg_options = cfg["options"] || {}
     
     raise ArgumentError.new "there's no server config in the config file" unless cfg.has_key? "servers"
     raise ArgumentError.new "the config file doesn't contain a config for #{network}" unless cfg["servers"].has_key? network
@@ -41,6 +60,9 @@ module Cinchize
     
     ntw.delete("plugins").each do |plugin|
       begin
+        raise LoadError.new "the module can't be null" if plugin["module"].nil?
+        raise NameError.new "the class can't be null" if plugin["class"].nil?
+        
         require plugin["module"]
       
         clazz = nil
@@ -49,9 +71,9 @@ module Cinchize
       
         plugin_options[plugin["class"]] = plugin["options"] || {}
       rescue LoadError => e
-        puts "Couldn't load the module #{e}"
+        puts "error while loading the module: #{e}"
       rescue NameError => e
-        puts "Couldn't load the class #{e}"
+        puts "error while loading the class: #{e}"
       end
     end
 
@@ -59,24 +81,12 @@ module Cinchize
 
     name = "cinchize_#{network}"
     
+    cfg["options"] ||= {}
     daemon_options = {
-      :pid => cfg_options["pid"] || File.dirname(__FILE__),
+      :pid => cfg["options"]["pid"] || File.dirname(__FILE__),
       :app_name => name
     }
     
-    Daemons.run_proc(name, daemon_options) do
-      bot = Cinch::Bot.new do  
-        configure do |c|
-          ntw.keys.each do |key|
-            c.send("#{key}=".to_sym, ntw[key])
-          end
-          
-          c.plugins.plugins = plugins
-          c.plugins.options = plugin_options
-        end
-      end
-      
-      bot.start
-    end
+    [name, daemon_options, ntw, plugins, plugin_options]
   end
 end
