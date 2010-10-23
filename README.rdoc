@@ -2,6 +2,18 @@
 
 An early version of program which purpose is to daemonize Cinch ircbots from "simple" json config-files.
 
+== Usage
+
+Basic
+
+  cinchize start -- server
+  
+Specify a config file, if no file is specified the cinchize is looking for it in /etc/cinchize.json
+
+  cinchize start -- -f config.json server
+
+Server is the name you call the a server config in the servers part of the config file, i.e. "freenode", "my_cute_bot", "quakenet" or similar. 
+
 == Config-file
 
 All config options can be skipped and the bot will use the defaults, but it could always be nice to connect to a server that isn't localhost, right? Plugins can be skipped too, but then the bot wouldn't do anything other then just idle.
