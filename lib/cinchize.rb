@@ -27,7 +27,8 @@ module Cinchize
       bot.start
     end
   rescue ArgumentError => e
-    "Error: #{e}"
+    puts "Error: #{e}"
+    exit 1
   end
   
   def self.config
