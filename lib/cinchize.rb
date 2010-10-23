@@ -23,32 +23,39 @@ module Cinchize
       config_file = cmd_options[cmd_options.index("-f") + 1]
     end
     
-    raise ArgumentError "the config file doesn't exist" unless File.exists? config_file
-    
-    raise ArgumentError "needs a network" if cmd_options[-1].nil?
+    raise ArgumentError.new "the config file doesn't exist" unless File.exists? config_file
+    raise ArgumentError.new "needs a network" if cmd_options[-1].nil?
+
     network = cmd_options[-1]
     
     cfg = JSON.parse File.open(config_file, "r").read()
     cfg_options = cfg["options"] || {}
     
-    raise ArgumentError "there's no server config in the config file" unless cfg.has_key? "servers"
-    raise ArgumentError "the config file doesn't contain a config for #{network}" unless cfg["servers"].has_key? network
-
-    ntw_cfg = cfg["servers"]
-    ntw = ntw_cfg[network]
+    raise ArgumentError.new "there's no server config in the config file" unless cfg.has_key? "servers"
+    raise ArgumentError.new "the config file doesn't contain a config for #{network}" unless cfg["servers"].has_key? network
+    
+    ntw = cfg["servers"][network]
     
     plugins = []
     plugin_options = {}
     
     ntw.delete("plugins").each do |plugin|
-      require plugin["module"]
+      begin
+        require plugin["module"]
       
-      clazz = nil
-      plugin["class"].split("::").inject(Object) { |m,n| clazz = m.const_get(n) }
-      plugins << clazz 
+        clazz = nil
+        plugin["class"].split("::").inject(Object) { |m,n| clazz = m.const_get(n) }
+        plugins << clazz 
       
-      plugin_options[plugin["class"]] = plugin["options"] || {}
+        plugin_options[plugin["class"]] = plugin["options"] || {}
+      rescue LoadError => e
+        puts "Couldn't load the module #{e}"
+      rescue NameError => e
+        puts "Couldn't load the class #{e}"
+      end
     end
+
+    raise ArgumentError.new "no plugins loaded" if plugins.size == 0
 
     name = "cinchize_#{network}"
     
@@ -71,6 +78,5 @@ module Cinchize
       
       bot.start
     end
-    
   end
 end
