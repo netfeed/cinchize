@@ -81,10 +81,10 @@ module Cinchize
     raise ArgumentError.new "no plugins loaded" if plugins.size == 0
 
     name = "cinchize_#{network}"
-    
+
     cfg["options"] ||= {}
     daemon_options = {
-      :pid => cfg["options"]["pid"] || File.dirname(__FILE__),
+      :pid => cfg["options"]["pid"] || Dir.getwd,
       :app_name => name
     }
     
