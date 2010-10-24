@@ -20,13 +20,16 @@ All config options can be skipped and the bot will use the defaults, but it coul
 
   {
     "options" : {
-      "pid" : "/path/to/pid/dir",
+      "dir" : "/path/to/pid/dir",
+      "dir_mode" : "normal",
+      "log_output" : true
     },
     "servers" : {
       "freenode" : {
         "server" : "irc.freenode.net",
         "port" : 6667,
         "nick" : "Cinchbot",
+        "channels" : ["#cinchbots"],
         "plugins" : [
           {
             "module" : "plugin-module",
@@ -38,6 +41,11 @@ All config options can be skipped and the bot will use the defaults, but it coul
     }
   }
 
+=== Options explained
+
+dir: the save path, absolute or relative to either /var/run or to the current working directory
+dir_mode: "system" to work from /var/run and "normal", to work from current working directory or from an absolute path
+log_output: writes STDERR and STDOUT to a logfile in the same dir as the pid-file
 
 == Copyright
 
