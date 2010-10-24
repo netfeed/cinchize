@@ -70,7 +70,7 @@ module Cinchize
         plugin["class"].split("::").inject(Object) { |m,n| clazz = m.const_get(n) }
         plugins << clazz 
       
-        plugin_options[plugin["class"]] = plugin["options"] || {}
+        plugin_options[clazz] = plugin["options"] || {}
       rescue LoadError => e
         puts "error while loading the module: #{e}"
       rescue NameError => e
