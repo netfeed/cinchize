@@ -2,6 +2,10 @@
 
 An early version of program which purpose is to daemonize Cinch ircbots from "simple" json config-files.
 
+== Installation
+
+  gem install cinchize
+
 == Usage
 
 Basic
