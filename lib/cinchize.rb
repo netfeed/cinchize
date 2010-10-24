@@ -11,8 +11,8 @@ require 'json'
 
 module Cinchize
   def self.run
-    name, daemon_options, ntw, plugins, plugin_options = config 
-    Daemons.run_proc(name, daemon_options) do
+    daemon_options, ntw, plugins, plugin_options = config 
+    Daemons.run_proc(daemon_options[:app_name], daemon_options) do
       bot = Cinch::Bot.new do  
         configure do |c|
           ntw.keys.each do |key|
@@ -80,14 +80,16 @@ module Cinchize
 
     raise ArgumentError.new "no plugins loaded" if plugins.size == 0
 
-    name = "cinchize_#{network}"
+    dir_mode = cfg["options"]["dir_mode"].nil? ? "normal" : cfg["options"]["dir_mode"]
 
     cfg["options"] ||= {}
     daemon_options = {
-      :pid => cfg["options"]["pid"] || Dir.getwd,
-      :app_name => name
+      :dir_mode => dir_mode.to_sym,
+      :dir => cfg["options"]["dir"] || Dir.getwd,
+      :log_output => cfg["options"]["log_output"] || false,
+      :app_name => "cinchize_#{network}"
     }
-    
-    [name, daemon_options, ntw, plugins, plugin_options]
+
+    [daemon_options, ntw, plugins, plugin_options]
   end
 end
