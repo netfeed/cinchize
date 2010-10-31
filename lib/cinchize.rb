@@ -63,8 +63,6 @@ module Cinchize
   end
   
   def self.config options, network
-    cmd_options = []
-    
     config_file = options[:system] ? options[:system_config]: options[:local_config]
     
     raise ArgumentError.new "the config file #{config_file} doesn't exist" unless File.exists? config_file
