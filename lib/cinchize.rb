@@ -16,6 +16,7 @@ module Cinchize
     :system => false,
     :local_config => File.join(Dir.pwd, 'cinchize.json'),
     :system_config => '/etc/cinchize.json',
+    :action => nil,
   }
   
   def self.run
@@ -33,10 +34,49 @@ module Cinchize
         options[:system] = true
       }
       
+      o.on("--start", "Start the bot") {
+        options[:action] = :start
+      }
+
+      o.on("--status", "Status of the bot") {
+        options[:action] = :status
+      }
+      
+      o.on("--stop", "Stop the bot") {
+        options[:action] = :stop
+      }
+      
+      o.on("--restart", "Restart the bot") {
+        options[:action] = :restart
+      }
+      
       o.parse!
     end
 
     d_options, network, plugins, plugin_options = config(options, ARGV.first)
+
+    case options[:action]
+    when :start then 
+      start(d_options, network, plugins, plugin_options)
+    when :status then 
+      status(d_options[:dir], d_options[:app_name])
+    when :stop then 
+      stop(d_options[:dir], d_options[:app_name])
+    when :restart then 
+      stop(d_options[:dir], d_options[:app_name])
+      start(d_options, network, plugins, plugin_options)
+    else
+      puts "Error: no valid action supplied"
+      exit 1
+    end
+  rescue ArgumentError => e
+    puts "Error: #{e}"
+    exit 1
+  end
+  
+  def self.start d_options, network, plugins, plugin_options
+    puts "* starting #{d_options[:app_name].split('_').last}"
+    
     daemon = Daemons::ApplicationGroup.new(d_options[:app_name], {
       :ontop => d_options[:ontop],
       :dir => d_options[:dir],
@@ -57,9 +97,34 @@ module Cinchize
 
       bot.start
     end
-  rescue ArgumentError => e
-    puts "Error: #{e}"
-    exit 1
+  end
+  
+  def self.stop dir, app_name
+    pidfile = Daemons::PidFile.new dir, app_name
+    unless pidfile.pid
+      puts "* #{app_name.split('_').last} is not running"
+      return
+    end
+    
+    puts "* stopping #{app_name.split('_').last}"
+    
+    Process.kill(9, pidfile.pid)
+    File.delete(pidfile.filename)
+  end
+  
+  def self.status dir, app_name
+    pidfile = Daemons::PidFile.new dir, app_name
+
+    unless pidfile.pid
+      puts "* #{app_name.split('_').last} is not running"
+      return
+    end
+    
+    if Process.kill(0, pidfile.pid) != 0
+      puts "* #{app_name.split('_').last} is running"
+    else
+      puts "* #{app_name.split('_').last} is not running"
+    end
   end
   
   def self.config options, network
