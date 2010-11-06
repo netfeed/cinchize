@@ -186,7 +186,7 @@ module Daemons
   class Application
     def start_none
       unless options[:ontop]
-        Daemonize.daemonize(output_logfile, @group.app_name)
+        Daemonize.daemonize(output_logfile, @group.app_name) # our change goes here
       else
         Daemonize.simulate
       end
