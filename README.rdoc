@@ -10,17 +10,19 @@ An early version of program which purpose is to daemonize Cinch ircbots from "si
 
 Basic
 
-  cinchize network
+  cinchize --start network
 
 The config file can either be in the current working directory or in /etc, should be called cinchize.json, i.e. /etc/cinchize.json, use -s to look for the file in /etc
   
-  cinchize -s network
+  cinchize -s --start network
   
 To daemonzize, use -d
 
-  cinchize -d network
+  cinchize -d --start network
 
-Network is the name you call the a server config in the servers part of the config file, i.e. "freenode", "my_cute_bot", "quakenet" or similar. 
+Network is the name you call the a server config in the servers part of the config file, i.e. "freenode", "my_cute_bot", "quakenet" or similar.
+
+--start, --restart, --stop and --status assumes that the config file is located in the current working directory unless -s is used.
 
 == Config-file
 
