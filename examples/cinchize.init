@@ -1,0 +1,41 @@
+#!/bin/bash
+# Copyright (c) 2010 Victor Bergöö
+# This program is made available under the terms of the MIT License.
+
+# assumes that the config file is located at /etc/cinchize.json
+
+RETVAL=0;
+NETWORK="freenode"
+
+start() {
+  cinchize -ds --start $NETWORK
+}
+
+status() {
+  cinchize -s --status $NETWORK
+}
+
+stop() {
+  cinchize -s --stop $NETWORK
+}
+
+restart() {
+  cinchize -ds --restart $NETWORK
+}
+
+case "$1" in
+  start)
+    start
+    ;;
+  status)
+    status
+    ;;
+  stop)
+    stop
+    ;;  
+  restart)
+    restart
+    ;;
+esac
+
+exit $RETVAL
