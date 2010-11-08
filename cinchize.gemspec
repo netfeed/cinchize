@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{cinchize}
-  s.version = "0.0.3"
+  s.version = "0.1.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Victor Bergöö"]
-  s.date = %q{2010-10-31}
+  s.date = %q{2010-11-08}
   s.default_executable = %q{cinchize}
   s.description = %q{Create dynamic Cinch IRC-bots and daemonize them, without the need of writing any code}
   s.email = %q{victor.bergoo@gmail.com}
@@ -26,6 +26,7 @@ Gem::Specification.new do |s|
      "VERSION",
      "bin/cinchize",
      "cinchize.gemspec",
+     "examples/cinchize.init",
      "lib/cinchize.rb"
   ]
   s.homepage = %q{http://github.com/netfeed/cinchize}
