@@ -75,9 +75,8 @@ module Cinchize
   end
   
   def self.start d_options, network, plugins, plugin_options
-    pidfile = Daemons::PidFile.new d_options[:dir], d_options[:app_name]
-    if pidfile.pid
-      raise ArgumentError.new "#{d_options[:app_name]} is already running"      
+    if running?(d_options[:dir], d_options[:app_name])
+      raise ArgumentError.new "#{d_options[:app_name].split('_').last} is already running"      
     end
 
     puts "* starting #{d_options[:app_name].split('_').last}"
@@ -105,12 +104,12 @@ module Cinchize
   end
   
   def self.stop dir, app_name
-    pidfile = Daemons::PidFile.new dir, app_name
-    unless pidfile.pid
+    unless running?(dir, app_name)
       puts "* #{app_name.split('_').last} is not running"
       return
     end
-    
+
+    pidfile = Daemons::PidFile.new dir, app_name
     puts "* stopping #{app_name.split('_').last}"
     
     Process.kill(9, pidfile.pid)
@@ -118,14 +117,7 @@ module Cinchize
   end
   
   def self.status dir, app_name
-    pidfile = Daemons::PidFile.new dir, app_name
-
-    unless pidfile.pid
-      puts "* #{app_name.split('_').last} is not running"
-      return
-    end
-    
-    if Process.kill(0, pidfile.pid) != 0
+    if running?(dir, app_name)
       puts "* #{app_name.split('_').last} is running"
     else
       puts "* #{app_name.split('_').last} is not running"
@@ -181,6 +173,12 @@ module Cinchize
     }
 
     [daemon_options, ntw, plugins, plugin_options]
+  end
+  
+  def self.running? dir, app_name
+    pidfile = Daemons::PidFile.new dir, app_name
+    return false if pidfile.pid.nil?
+    return Process.kill(0, pidfile.pid) != 0
   end
 end
 
