@@ -112,8 +112,8 @@ module Cinchize
     raise ArgumentError.new "no plugins loaded" if plugins.size == 0
 
     cfg["options"] ||= {}
-    dir_mode = cfg["options"]["dir_mode"].nil? ? "normal" : cfg["options"]["dir_mode"]
-    
+    dir_mode = cfg["options"].key?("dir_mode") ? cfg["options"]["dir_mode"] : "normal"
+        
     daemon_options = {
       :dir_mode => dir_mode.to_sym,
       :dir => cfg["options"]["dir"] || Dir.getwd,
