@@ -75,6 +75,11 @@ module Cinchize
   end
   
   def self.start d_options, network, plugins, plugin_options
+    pidfile = Daemons::PidFile.new d_options[:dir], d_options[:app_name]
+    if pidfile.pid
+      raise ArgumentError.new "#{d_options[:app_name]} is already running"      
+    end
+
     puts "* starting #{d_options[:app_name].split('_').last}"
     
     daemon = Daemons::ApplicationGroup.new(d_options[:app_name], {
