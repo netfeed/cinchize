@@ -53,18 +53,18 @@ module Cinchize
       o.parse!
     end
 
-    d_options, network, plugins, plugin_options = config(options, ARGV.first)
+    daemon = Cinchize.new *config(options, ARGV.first)
 
     case options[:action]
     when :start then 
-      start(d_options, network, plugins, plugin_options)
+      daemon.start
     when :status then 
-      status(d_options[:dir], d_options[:app_name])
+      daemon.status
     when :stop then 
-      stop(d_options[:dir], d_options[:app_name])
+      daemon.stop
     when :restart then 
-      stop(d_options[:dir], d_options[:app_name])
-      start(d_options, network, plugins, plugin_options)
+      daemon.stop
+      daemon.start
     else
       puts "Error: no valid action supplied"
       exit 1
@@ -73,57 +73,7 @@ module Cinchize
     puts "Error: #{e}"
     exit 1
   end
-  
-  def self.start d_options, network, plugins, plugin_options
-    if running?(d_options[:dir], d_options[:app_name])
-      raise ArgumentError.new "#{d_options[:app_name].split('_').last} is already running"      
-    end
 
-    puts "* starting #{d_options[:app_name].split('_').last}"
-    
-    daemon = Daemons::ApplicationGroup.new(d_options[:app_name], {
-      :ontop => d_options[:ontop],
-      :dir => d_options[:dir],
-      :dir_mode => d_options[:dir_mode]
-    })
-    app = daemon.new_application :mode => :none, :log_output => d_options[:log_output]
-    app.start
-    
-    loop do
-      bot = Cinch::Bot.new do  
-        configure do |c|
-          network.each_pair { |key, value| c.send("#{key}=".to_sym, value) }
-
-          c.plugins.plugins = plugins
-          c.plugins.options = plugin_options
-        end
-      end
-
-      bot.start
-    end
-  end
-  
-  def self.stop dir, app_name
-    unless running?(dir, app_name)
-      puts "* #{app_name.split('_').last} is not running"
-      return
-    end
-
-    pidfile = Daemons::PidFile.new dir, app_name
-    puts "* stopping #{app_name.split('_').last}"
-    
-    Process.kill(9, pidfile.pid)
-    File.delete(pidfile.filename)
-  end
-  
-  def self.status dir, app_name
-    if running?(dir, app_name)
-      puts "* #{app_name.split('_').last} is running"
-    else
-      puts "* #{app_name.split('_').last} is not running"
-    end
-  end
-  
   def self.config options, network
     config_file = options[:system] ? options[:system_config]: options[:local_config]
     
@@ -175,10 +125,87 @@ module Cinchize
     [daemon_options, ntw, plugins, plugin_options]
   end
   
-  def self.running? dir, app_name
-    pidfile = Daemons::PidFile.new dir, app_name
-    return false if pidfile.pid.nil?
-    return Process.kill(0, pidfile.pid) != 0
+  class Cinchize
+    attr_reader :options
+    
+    def initialize options, network, plugins, plugin_options
+      @network = network
+      @plugins = plugins      
+      @plugin_options = plugin_options
+      @options = options
+    end
+
+    def app_name
+      options[:app_name]
+    end
+
+    def dir
+      options[:dir]
+    end
+    
+    def clean_app_name
+      app_name.split('_').last
+    end
+
+    def start 
+      if running?
+        raise ArgumentError.new "#{clean_app_name} is already running"      
+      end
+
+      puts "* starting #{clean_app_name}"
+
+      daemon = Daemons::ApplicationGroup.new(app_name, {
+        :ontop => options[:ontop],
+        :dir => dir,
+        :dir_mode => options[:dir_mode]
+      })
+      app = daemon.new_application :mode => :none, :log_output => options[:log_output]
+      app.start
+
+      network = @network
+      plugins = @plugins
+      plugin_options = @plugin_options
+
+      loop do
+        bot = Cinch::Bot.new do  
+          configure do |c|
+            network.each_pair { |key, value| c.send("#{key}=".to_sym, value) }
+
+            c.plugins.plugins = plugins
+            c.plugins.options = plugin_options
+          end
+        end
+
+        bot.start
+      end
+    end
+    
+    def stop 
+      unless running?
+        puts "* #{clean_app_name} is not running"
+        return
+      end
+
+      pidfile = Daemons::PidFile.new dir, app_name
+      puts "* stopping #{clean_app_name}"
+
+      Process.kill(9, pidfile.pid)
+      File.delete(pidfile.filename)
+    end
+    
+    def status 
+      if running?
+        puts "* #{clean_app_name} is running"
+      else
+        puts "* #{clean_app_name} is not running"
+      end
+    end
+    
+    def running? 
+      pidfile = Daemons::PidFile.new dir, app_name
+      return false if pidfile.pid.nil?
+      return Process.kill(0, pidfile.pid) != 0
+    end
   end
 end
 
