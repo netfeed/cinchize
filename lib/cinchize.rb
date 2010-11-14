@@ -93,7 +93,7 @@ module Cinchize
     loop do
       bot = Cinch::Bot.new do  
         configure do |c|
-          network.keys.each { |key| c.send("#{key}=".to_sym, network[key]) }
+          network.each_pair { |key, value| c.send("#{key}=".to_sym, value) }
 
           c.plugins.plugins = plugins
           c.plugins.options = plugin_options
