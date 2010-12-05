@@ -54,21 +54,10 @@ module Cinchize
     end
 
     daemon = Cinchize.new *config(options, ARGV.first)
-
-    case options[:action]
-    when :start then 
-      daemon.start
-    when :status then 
-      daemon.status
-    when :stop then 
-      daemon.stop
-    when :restart then 
-      daemon.stop
-      daemon.start
-    else
-      puts "Error: no valid action supplied"
-      exit 1
-    end
+    daemon.send options[:action]
+  rescue NoMethodError => e
+    puts "Error: no such method"
+    exit 1
   rescue ArgumentError => e
     puts "Error: #{e}"
     exit 1
@@ -145,6 +134,11 @@ module Cinchize
     
     def clean_app_name
       app_name.split('_').last
+    end
+
+    def restart
+      stop
+      start
     end
 
     def start 
