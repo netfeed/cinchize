@@ -133,7 +133,7 @@ module Cinchize
     end
     
     def clean_app_name
-      app_name.split('_').last
+      app_name.split('_', 2).last
     end
 
     def restart
