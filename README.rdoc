@@ -1,6 +1,8 @@
 = cinchize
 
-An early version of program which purpose is to daemonize Cinch ircbots from "simple" json config-files.
+Cinchize scope is to easily get a daemonized irc-bot up and running using plugins where there shouldn't be any need to actually write code.
+
+It should be noted that the program is currently considered to be in beta and may change both in how it's accessed and how the config logs is formed.
 
 == Installation
 
