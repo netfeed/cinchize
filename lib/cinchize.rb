@@ -199,6 +199,8 @@ module Cinchize
       pidfile = Daemons::PidFile.new dir, app_name
       return false if pidfile.pid.nil?
       return Process.kill(0, pidfile.pid) != 0
+    rescue Errno::ESRCH => e
+      return false
     end
   end
 end
