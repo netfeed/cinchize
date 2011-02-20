@@ -7,15 +7,15 @@ $LOAD_PATH.unshift(dir) unless $LOAD_PATH.include? dir
 
 require 'cinch'
 require 'daemons'
-require 'json'
+require 'yaml'
 require 'optparse'
 
 module Cinchize
   Options = {
     :ontop => true,
     :system => false,
-    :local_config => File.join(Dir.pwd, 'cinchize.json'),
-    :system_config => '/etc/cinchize.json',
+    :local_config => File.join(Dir.pwd, 'cinchize.yml'),
+    :system_config => '/etc/cinchize.yml',
     :action => nil,
   }
   
@@ -65,11 +65,20 @@ module Cinchize
 
   def self.config options, network
     config_file = options[:system] ? options[:system_config]: options[:local_config]
+    unless File.exists? config_file
+      config_file.gsub! /yml$/, "json"
+    end
     
-    raise ArgumentError.new "the config file #{config_file} doesn't exist" unless File.exists? config_file
+    raise ArgumentError.new "the config file #{config_file.gsub(/json$/, 'yml')} doesn't exist" unless File.exists? config_file
     raise ArgumentError.new "needs a network" if network.nil? or network.empty?
 
-    cfg = JSON.parse File.open(config_file, "r").read()
+    if File.extname(config_file) == ".yml"
+      cfg = YAML.load_file config_file
+    else 
+      require 'json'
+      puts "WARNING: the json config format has be deprecated in favour of YaML"
+      cfg = JSON.parse open(config_file, 'r').read()
+    end
     
     raise ArgumentError.new "there's no server config in the config file" unless cfg.has_key? "servers"
     raise ArgumentError.new "the config file doesn't contain a config for #{network}" unless cfg["servers"].has_key? network

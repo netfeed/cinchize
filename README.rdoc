@@ -14,7 +14,7 @@ Basic
 
   cinchize --start network
 
-The config file can either be in the current working directory or in /etc, should be called cinchize.json, i.e. /etc/cinchize.json, use -s to look for the file in /etc
+The config file can either be in the current working directory or in /etc and should be called cinchize.yml. Use the flag -s to tell cinchize to look for the config file at /etc/cinchize.yml.
   
   cinchize -s --start network
   
@@ -22,38 +22,35 @@ To daemonzize, use -d
 
   cinchize -d --start network
 
-Network is the name you call the a server config in the servers part of the config file, i.e. "freenode", "my_cute_bot", "quakenet" or similar.
+Network is the name you call the a server config in the servers part of the config file, i.e. "freenode", "super_duper_amazing_network", "quakenet" or similar.
 
 --start, --restart, --stop and --status assumes that the config file is located in the current working directory unless -s is used.
 
 == Config-file
 
-All config options can be skipped and the bot will use the defaults, but it could always be nice to connect to a server that isn't localhost, right? Plugins can be skipped too, but then the bot wouldn't do anything other then just idle.
+All config options to each server object is optional, except for the channels and plugins. All valid config options for a Cinch bot should work.
 
-  {
-    "options" : {
-      "dir" : "/path/to/pid/dir",
-      "dir_mode" : "normal",
-      "log_output" : true
-    },
-    "servers" : {
-      "freenode" : {
-        "server" : "irc.freenode.net",
-        "port" : 6667,
-        "nick" : "Cinchbot",
-        "channels" : ["#cinchbots"],
-        "plugins" : [
-          {
-            "module" : "plugin-module",
-            "class" : "Cinch::Plugins::User::SomePlugin",
-            "options" : { 
-                "foo" : "bar"
-            }
-          }
-        ]
-      }
-    }
-  }
+  options:
+    log_output: true
+    dir_mode: normal
+    dir: "/path/to/pid/dir"
+  servers:
+    freenode:
+      server: irc.freenode.net
+      port: 6667
+      nick: CinchizeBot
+      channels:
+        - "#cinchbots"
+      plugins:
+        - 
+          module: "cinch/plugins/somep_plugin"
+          class: "Cinch::Plugins::SomePlugin"
+          options:
+            option: value
+
+=== JSON deprecation
+
+The JSON format has been deprecated and will be removed in a future release, YaML is the preferred format hence forth.
 
 === Options explained
 
