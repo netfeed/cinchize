@@ -69,7 +69,7 @@ module Cinchize
       config_file.gsub! /yml$/, "json"
     end
     
-    raise ArgumentError.new "the config file #{config_file.gsub(/json$/, 'yml')} doesn't exist" unless File.exists? config_file
+    raise ArgumentError.new "there's no config file located at: #{config_file.gsub(/json$/, 'yml')}" unless File.exists? config_file
     raise ArgumentError.new "needs a network" if network.nil? or network.empty?
 
     if File.extname(config_file) == ".yml"
