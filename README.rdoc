@@ -43,10 +43,13 @@ All config options to each server object is optional, except for the channels an
         - "#cinchbots"
       plugins:
         - 
-          module: "cinch/plugins/somep_plugin"
+          module: "cinch/plugins/some_plugin"
           class: "Cinch::Plugins::SomePlugin"
           options:
             option: value
+        -
+          module: "cinch/plugins/another_plugin"
+          class: "Cinch::Plugins::AnotherPlugin"
 
 === JSON deprecation
 
