@@ -8,61 +8,8 @@ $LOAD_PATH.unshift(dir) unless $LOAD_PATH.include? dir
 require 'cinch'
 require 'daemons'
 require 'yaml'
-require 'optparse'
 
 module Cinchize
-  Options = {
-    :ontop => true,
-    :system => false,
-    :local_config => File.join(Dir.pwd, 'cinchize.yml'),
-    :system_config => '/etc/cinchize.yml',
-    :action => nil,
-  }
-  
-  def self.run
-    options = Options.dup
-    
-    ARGV.options do |o|
-      o.set_summary_indent '  '
-      o.banner = "Usage: #{File.basename $0} [Options] network"
-      
-      o.on("-d", "--daemonize", "Daemonize") { 
-        options[:ontop] = false
-      }
-      
-      o.on("-s", "--system-config", "Use system config") { 
-        options[:system] = true
-      }
-      
-      o.on("--start", "Start the bot") {
-        options[:action] = :start
-      }
-
-      o.on("--status", "Status of the bot") {
-        options[:action] = :status
-      }
-      
-      o.on("--stop", "Stop the bot") {
-        options[:action] = :stop
-      }
-      
-      o.on("--restart", "Restart the bot") {
-        options[:action] = :restart
-      }
-      
-      o.parse!
-    end
-
-    daemon = Cinchize.new *config(options, ARGV.first)
-    daemon.send options[:action]
-  rescue NoMethodError => e
-    puts "Error: no such method"
-    exit 1
-  rescue ArgumentError => e
-    puts "Error: #{e}"
-    exit 1
-  end
-
   def self.config options, network
     config_file = options[:system] ? options[:system_config]: options[:local_config]
     unless File.exists? config_file
