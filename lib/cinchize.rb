@@ -139,7 +139,7 @@ module Cinchize
       pidfile = Daemons::PidFile.new dir, app_name
       puts "* stopping #{clean_app_name}"
 
-      Process.kill(9, pidfile.pid)
+      Process.kill("QUIT", pidfile.pid)
       File.delete(pidfile.filename)
     end
     
