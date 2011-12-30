@@ -51,10 +51,6 @@ All config options to each server object is optional, except for the channels an
           module: "cinch/plugins/another_plugin"
           class: "Cinch::Plugins::AnotherPlugin"
 
-=== JSON deprecation
-
-The JSON format has been deprecated and will be removed in a future release, YaML is the preferred format hence forth.
-
 === Options explained
 
 dir: the save path, absolute or relative to either /var/run or to the current working directory
