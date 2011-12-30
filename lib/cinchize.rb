@@ -12,11 +12,8 @@ require 'yaml'
 module Cinchize
   def self.config options, network
     config_file = options[:system] ? options[:system_config]: options[:local_config]
-    unless File.exists? config_file
-      config_file.gsub! /yml$/, "json"
-    end
     
-    raise ArgumentError.new "there's no config file located at: #{config_file.gsub(/json$/, 'yml')}" unless File.exists? config_file
+    raise ArgumentError.new "there's no config file located at: #{config_file}" unless File.exists? config_file
     raise ArgumentError.new "needs a network" if network.nil? or network.empty?
 
     cfg = YAML.load_file config_file
