@@ -19,13 +19,7 @@ module Cinchize
     raise ArgumentError.new "there's no config file located at: #{config_file.gsub(/json$/, 'yml')}" unless File.exists? config_file
     raise ArgumentError.new "needs a network" if network.nil? or network.empty?
 
-    if File.extname(config_file) == ".yml"
-      cfg = YAML.load_file config_file
-    else 
-      require 'json'
-      puts "WARNING: the json config format has be deprecated in favour of YaML"
-      cfg = JSON.parse open(config_file, 'r').read()
-    end
+    cfg = YAML.load_file config_file
     
     raise ArgumentError.new "there's no server config in the config file" unless cfg.has_key? "servers"
     raise ArgumentError.new "the config file doesn't contain a config for #{network}" unless cfg["servers"].has_key? network
