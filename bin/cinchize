@@ -25,6 +25,10 @@ ARGV.options do |o|
     options[:ontop] = false
   }
   
+  o.on("-r", "--running", "Show status for all bots") {
+    options[:action] = :show_running
+  }
+  
   o.on("-s", "--system-config", "Use system config") { 
     options[:system] = true
   }
@@ -49,8 +53,19 @@ ARGV.options do |o|
 end
 
 begin
-  daemon = Cinchize::Cinchize.new *Cinchize.config(options, ARGV.first)
-  daemon.send options[:action]
+  if options[:action] == :show_running 
+    config_file = options[:system] ? options[:system_config]: options[:local_config]
+    cfg = YAML.load_file config_file
+
+    cfg["servers"].keys.sort.each do |key|
+      daemon = Cinchize::Cinchize.new *Cinchize.config(options, key)
+      status = daemon.running? ? "" : "not "
+      puts "#{key} is #{status}running"
+    end
+  else 
+    daemon = Cinchize::Cinchize.new *Cinchize.config(options, ARGV.first)
+    daemon.send options[:action]
+  end
 rescue NoMethodError => e
   puts "Error: no such method"
   exit 1
