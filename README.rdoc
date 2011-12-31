@@ -24,7 +24,7 @@ To daemonize, use -d
 
 Network is the name you call the a server config in the servers part of the config file, i.e. "freenode", "super_duper_amazing_network", "quakenet" or similar.
 
---start, --restart, --stop and --status assumes that the config file is located in the current working directory unless -s is used.
+--start, --restart, --stop and --status assumes that "cinchize.yml" is located in the current working directory unless -s is used, then we assume that it's located in "/etc/cinchize.yml" as stated above.
 
 == Config-file
 
