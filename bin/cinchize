@@ -55,8 +55,13 @@ end
 begin
   if options[:action] == :show_running 
     config_file = options[:system] ? options[:system_config]: options[:local_config]
+
+    raise ArgumentError.new "no such file: #{config_file}" unless File.exists? config_file
     cfg = YAML.load_file config_file
 
+    raise ArgumentError.new "#{config_file} doesn't seem to be a YaML file" unless cfg
+    raise ArgumentError.new "cinchize isn't configured correctly, please recheck #{config_file}" unless cfg.key? "servers"
+    raise ArgumentError.new "there's no networks configured, please recheck #{config_file}" unless cfg["servers"]
     cfg["servers"].keys.sort.each do |key|
       daemon = Cinchize::Cinchize.new *Cinchize.config(options, key)
       daemon.status
