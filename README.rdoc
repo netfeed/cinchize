@@ -18,7 +18,7 @@ The config file can either be in the current working directory or in /etc and sh
   
   cinchize -s --start network
   
-To daemonzize, use -d
+To daemonize, use -d
 
   cinchize -d --start network
 
