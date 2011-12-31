@@ -19,6 +19,7 @@ module Cinchize
     cfg = YAML.load_file config_file
     
     raise ArgumentError.new "there's no server config in the config file" unless cfg.has_key? "servers"
+    raise ArgumentError.new "there's no networks configured, please recheck #{config_file}" unless cfg["servers"]
     raise ArgumentError.new "the config file doesn't contain a config for #{network}" unless cfg["servers"].has_key? network
     
     ntw = cfg["servers"][network]
