@@ -11,7 +11,7 @@ begin
     gem.description = %Q{Create dynamic Cinch IRC-bots and daemonize them, without the need of writing any code}
     gem.email = "victor.bergoo@gmail.com"
     gem.homepage = "http://github.com/netfeed/cinchize"
-    gem.authors = ["Victor Bergöö"]
+    gem.authors = ["Victor Bergoo"]
     gem.add_dependency "cinch"
     gem.add_dependency "daemons"
   end
