@@ -29,10 +29,9 @@ module Cinchize
     
     ntw.delete("plugins").each do |plugin|
       begin
-        raise LoadError.new "the module can't be null" if plugin["module"].nil?
         raise NameError.new "the class can't be null" if plugin["class"].nil?
         
-        require plugin["module"]
+        require plugin["class"].downcase.gsub('::', '/')
       
         clazz = nil
         plugin["class"].split("::").inject(Object) { |m,n| clazz = m.const_get(n) }
