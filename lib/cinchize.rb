@@ -102,14 +102,14 @@ module Cinchize
       app = daemon.new_application :mode => :none, :log_output => options[:log_output]
       app.start
 
-      network = @network
+      network = @network.keys.inject({}) { |memo, key| memo[key.to_sym] = @network[key]; memo }
       plugins = @plugins
       plugin_options = @plugin_options
 
       loop do
         bot = Cinch::Bot.new do  
           configure do |c|
-            network.each_pair { |key, value| c.send("#{key}=".to_sym, value) }
+            c.load network
 
             c.plugins.plugins = plugins
             c.plugins.options = plugin_options
