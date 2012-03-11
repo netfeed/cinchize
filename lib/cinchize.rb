@@ -46,8 +46,6 @@ module Cinchize
       end
     end
 
-    raise ArgumentError.new "no plugins loaded" if plugins.size == 0
-
     cfg["options"] ||= {}
     dir_mode = cfg["options"].key?("dir_mode") ? cfg["options"]["dir_mode"] : "normal"
         
