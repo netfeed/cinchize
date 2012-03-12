@@ -26,7 +26,8 @@ module Cinchize
     
     plugins = []
     plugin_options = {}
-    
+
+    ntw["plugins"] ||= []
     ntw.delete("plugins").each do |plugin|
       begin
         raise NameError.new "the class can't be null" if plugin["class"].nil?
