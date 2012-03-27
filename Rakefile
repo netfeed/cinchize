@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
 
-require 'rubygems'
-require 'rake'
-
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
@@ -15,7 +12,7 @@ begin
     gem.add_dependency "cinch", ">= 2.0.1"
     gem.add_dependency "daemons"
   end
-  Jeweler::GemcutterTasks.new
+  Jeweler::RubygemsDotOrgTasks.new
 rescue LoadError
   puts "Jeweler (or a dependency) not available. Install it with: gem install jeweler"
 end
