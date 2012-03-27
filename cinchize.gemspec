@@ -13,7 +13,6 @@ Gem::Specification.new do |s|
   s.files = [
     "LICENSE",
     "README.rdoc",
-    "Rakefile",
     "VERSION",
     "bin/cinchize",
     "cinchize.gemspec",
