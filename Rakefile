@@ -12,7 +12,7 @@ begin
     gem.email = "victor.bergoo@gmail.com"
     gem.homepage = "http://github.com/netfeed/cinchize"
     gem.authors = ["Victor Bergoo"]
-    gem.add_dependency "cinch"
+    gem.add_dependency "cinch", ">= 2.0.1"
     gem.add_dependency "daemons"
   end
   Jeweler::GemcutterTasks.new
