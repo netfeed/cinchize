@@ -1,2 +1,5 @@
 pkg
+Gemfile
+Gemfile.lock
+cinchize.yml
 .rvmrc
