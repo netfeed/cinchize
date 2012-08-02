@@ -102,7 +102,7 @@ module Cinchize
       app = daemon.new_application :mode => :none, :log_output => options[:log_output]
       app.start
 
-      network = @network.keys.inject({}) { |memo, key| memo[key.to_sym] = @network[key]; memo }
+      network = _sym_hash(@network)
       plugins = @plugins
       plugin_options = @plugin_options
 
@@ -147,6 +147,17 @@ module Cinchize
       return Process.kill(0, pidfile.pid) != 0
     rescue Errno::ESRCH => e
       return false
+    end
+
+    def _sym_hash hsh
+      hsh.keys.inject({}) do |memo, key| 
+        if hsh[key].is_a? Hash
+          memo[key.to_sym] = _sym_hash(hsh[key])
+        else 
+          memo[key.to_sym] = hsh[key]
+        end
+        memo 
+      end
     end
   end
 end
