@@ -10,6 +10,8 @@ require 'daemons'
 require 'yaml'
 
 module Cinchize
+  VERSION = File.read(File.dirname(__FILE__) + "/../VERSION").chomp
+  
   def self.config options, network
     config_file = options[:system] ? options[:system_config]: options[:local_config]
     
